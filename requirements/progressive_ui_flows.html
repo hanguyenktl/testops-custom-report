@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Disclosure UI Flows</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .ui-flow-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .flow-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .ui-stages {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            overflow-x: auto;
+            min-height: 600px;
+        }
+        
+        .ui-stage {
+            min-width: 350px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .stage-level-1 { border-color: #fbbf24; }
+        .stage-level-2 { border-color: #3b82f6; }
+        .stage-level-3 { border-color: #10b981; }
+        .stage-level-4 { border-color: #ec4899; }
+        
+        .ui-stage-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .stage-level {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .level-1 { color: #f59e0b; }
+        .level-2 { color: #3b82f6; }
+        .level-3 { color: #10b981; }
+        .level-4 { color: #ec4899; }
+        
+        .stage-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        
+        .mock-ui {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+        
+        .ui-section {
+            margin-bottom: 16px;
+        }
+        
+        .ui-section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .form-control:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+        
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+        
+        .expansion-trigger {
+            background: #f0f9ff;
+            border: 1px solid #3b82f6;
+            color: #1d4ed8;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            margin: 12px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .expansion-trigger:hover {
+            background: #dbeafe;
+        }
+        
+        .expansion-trigger.clicked {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .hidden-section {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+            display: none;
+            opacity: 0.7;
+        }
+        
+        .hidden-section.revealed {
+            display: block;
+            opacity: 1;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .complexity-indicator {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .complexity-simple { color: #16a34a; }
+        .complexity-moderate { color: #ca8a04; }
+        .complexity-complex { color: #dc2626; }
+        .complexity-expert { color: #7c3aed; }
+        
+        .user-help {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.8rem;
+            color: #92400e;
+            margin: 8px 0;
+        }
+        
+        .flow-arrow {
+            position: absolute;
+            right: -24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #9ca3af;
+            z-index: 1;
+        }
+        
+        .ui-stage:last-child .flow-arrow {
+            display: none;
+        }
+        
+        .feature-comparison {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .comparison-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .comparison-table th {
+            background: #f8fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a202c;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .feature-available {
+            color: #16a34a;
+            font-weight: 600;
+        }
+        
+        .feature-limited {
+            color: #ca8a04;
+            font-weight: 600;
+        }
+        
+        .feature-unavailable {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .transition-examples {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        
+        .examples-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .transition-example {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .example-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 16px;
+        }
+        
+        .example-scenario {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .scenario-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .scenario-content {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .transition-trigger {
+            background: #dcfce7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 0.8rem;
+            color: #166534;
+            border-left: 3px solid #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Progressive Disclosure UI Flow Examples</h1>
+            <p>Detailed view of how users transition through configuration complexity levels with real UI examples</p>
+        </div>
+        
+        <div class="ui-flow-container">
+            <div class="flow-title">Test Execution Performance Template - Progressive UI Flow</div>
+            
+            <div class="ui-stages">
+                <div class="ui-stage stage-level-1">
+                    <div class="complexity-indicator complexity-simple">Simple</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="ui-stage-header">
+                        <div class="stage-level level-1">Level 1</div>
+                        <div class="stage-name">Basic Configuration</div>
+                    </div>
+                    
+                    <div class="mock-ui">
+                        <div class="ui-section">
+                            <div class="ui-section-title">📅 Time Period</div>
+                            <select class="form-control">
+                                <option>Last 30 days</option>
+                                <option>Last 7 days</option>
+                                <option>Last 3 months</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">🔍 Test Types</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Manual Tests
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Automated Tests
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">📊 Primary Metric</div>
+                            <select class="form-control">
+                                <option>Average Test Duration</option>
+                                <option>Total Test Executions</option>
+                                <option>Tests per Hour</option>
+                            </select>
+                        </div>
+                        
+                        <div class="user-help">
+                            💡 These settings work for 90% of performance analysis needs
+                        </div>
+                        
+                        <div class="expansion-trigger" onclick="toggleSection(this, 'more-options-1')">
+                            Show More Options ↓
+                        </div>
+                        
+                        <div class="hidden-section" id="more-options-1">
+                            <div class="ui-section-title">Additional filters and comparisons will appear here...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ui-stage stage-level-2">
+                    <div class="complexity-indicator complexity-moderate">Moderate</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="ui-stage-header">
+                        <div class="stage-level level-2">Level 2</div>
+                        <div class="stage-name">Intermediate Options</div>
+                    </div>
+                    
+                    <div class="mock-ui">
+                        <div class="ui-section">
+                            <div class="ui-section-title">📈 Time Comparison</div>
+                            <select class="form-control">
+                                <option>None</option>
+                                <option>vs Previous Period</option>
+                                <option>vs Same Period Last Quarter</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">⚡ Performance Thresholds</div>
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #6b7280;">
+                                <span>Fast</span>
+                                <input type="range" min="0" max="300" value="30" style="flex: 1;">
+                                <span>Slow</span>
+                                <span>(30-120s)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">🌍 Environment Filter</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> QA Environment
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Staging
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Production
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">📊 Visualization Style</div>
+                            <select class="form-control">
+                                <option>Volume Context (Line + Bars)</option>
+                                <option>Trend Focus (Line Only)</option>
+                                <option>Comparison View (Grouped Bars)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="user-help">
+                            💡 These options help you customize the analysis for specific needs
+                        </div>
+                        
+                        <div class="expansion-trigger" onclick="toggleSection(this, 'advanced-options-1')">
+                            Advanced Settings ↓
+                        </div>
+                        
+                        <div class="hidden-section" id="advanced-options-1">
+                            <div class="ui-section-title">Statistical analysis, alerting, and custom calculations...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ui-stage stage-level-3">
+                    <div class="complexity-indicator complexity-complex">Complex</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="ui-stage-header">
+                        <div class="stage-level level-3">Level 3</div>
+                        <div class="stage-name">Advanced Configuration</div>
+                    </div>
+                    
+                    <div class="mock-ui">
+                        <div class="ui-section">
+                            <div class="ui-section-title">🧮 Custom Calculated Fields</div>
+                            <select class="form-control">
+                                <option>Add New Calculation...</option>
+                                <option>Performance Score = 100 - (duration/60)</option>
+                                <option>Efficiency Ratio = passed_tests/duration</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">📈 Trend Analysis</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> 7-day Moving Average
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Linear Trend Line
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Seasonal Adjustment
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">🚨 Alerting Rules</div>
+                            <textarea class="form-control" rows="3" placeholder="IF avg_duration > 180 THEN highlight&#10;IF failure_rate > 10% THEN alert"></textarea>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">🔄 Data Refresh</div>
+                            <select class="form-control">
+                                <option>Every 15 minutes</option>
+                                <option>Every 5 minutes</option>
+                                <option>Real-time</option>
+                                <option>Manual only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="user-help">
+                            💡 Advanced options for power users and specialized analysis
+                        </div>
+                        
+                        <div class="expansion-trigger" onclick="toggleSection(this, 'expert-options-1')">
+                            Expert Mode ↓
+                        </div>
+                        
+                        <div class="hidden-section" id="expert-options-1">
+                            <div class="ui-section-title">Raw SQL editor, custom datasets, technical configuration...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ui-stage stage-level-4">
+                    <div class="complexity-indicator complexity-expert">Expert</div>
+                    <div class="ui-stage-header">
+                        <div class="stage-level level-4">Level 4</div>
+                        <div class="stage-name">Expert Mode</div>
+                    </div>
+                    
+                    <div class="mock-ui">
+                        <div class="ui-section">
+                            <div class="ui-section-title">💻 SQL Query Editor</div>
+                            <textarea class="form-control" rows="4" style="font-family: 'Monaco', 'Consolas', monospace; font-size: 0.8rem;">SELECT 
+  AVG(duration) as avg_duration,
+  COUNT(*) as total_executions
+FROM test_execution_dataset 
+WHERE start_time >= '2024-07-27'</textarea>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">📊 Raw Chart Configuration</div>
+                            <textarea class="form-control" rows="3" style="font-family: 'Monaco', 'Consolas', monospace; font-size: 0.8rem;">chart_type: "mixed_timeseries"
+color_scheme: "custom_palette"
+animation_duration: 1000</textarea>
+                        </div>
+                        
+                        <div class="ui-section">
+                            <div class="ui-section-title">⚙️ Performance Optimization</div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Enable Query Caching
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Use Materialized Views
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Parallel Query Processing
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="user-help">
+                            ⚠️ Expert mode provides full technical control with direct Superset access
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feature-comparison">
+            <div class="comparison-title">Feature Availability Across Configuration Levels</div>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature Category</th>
+                        <th>Level 1 (Basic)</th>
+                        <th>Level 2 (Intermediate)</th>
+                        <th>Level 3 (Advanced)</th>
+                        <th>Level 4 (Expert)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Time Scope Selection</strong></td>
+                        <td class="feature-available">✓ Preset options</td>
+                        <td class="feature-available">✓ + Custom ranges</td>
+                        <td class="feature-available">✓ + Complex periods</td>
+                        <td class="feature-available">✓ + Raw date logic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Filtering Options</strong></td>
+                        <td class="feature-available">✓ Basic filters</td>
+                        <td class="feature-available">✓ + Advanced filters</td>
+                        <td class="feature-available">✓ + Custom logic</td>
+                        <td class="feature-available">✓ + SQL conditions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Visualization Types</strong></td>
+                        <td class="feature-available">✓ Template defaults</td>
+                        <td class="feature-available">✓ + Style options</td>
+                        <td class="feature-available">✓ + Chart properties</td>
+                        <td class="feature-available">✓ + Full customization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Calculated Fields</strong></td>
+                        <td class="feature-unavailable">✗ Not available</td>
+                        <td class="feature-limited">~ Simple calculations</td>
+                        <td class="feature-available">✓ Formula builder</td>
+                        <td class="feature-available">✓ + SQL expressions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance Optimization</strong></td>
+                        <td class="feature-available">✓ Auto-optimized</td>
+                        <td class="feature-available">✓ + Basic controls</td>
+                        <td class="feature-available">✓ + Advanced tuning</td>
+                        <td class="feature-available">✓ + Full control</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Source Management</strong></td>
+                        <td class="feature-unavailable">✗ Hidden</td>
+                        <td class="feature-unavailable">✗ Hidden</td>
+                        <td class="feature-limited">~ Limited access</td>
+                        <td class="feature-available">✓ Full dataset control</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Query Optimization</strong></td>
+                        <td class="feature-available">✓ Automatic</td>
+                        <td class="feature-available">✓ Automatic</td>
+                        <td class="feature-limited">~ Some controls</td>
+                        <td class="feature-available">✓ Manual optimization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration & APIs</strong></td>
+                        <td class="feature-unavailable">✗ Not available</td>
+                        <td class="feature-unavailable">✗ Not available</td>
+                        <td class="feature-limited">~ Basic exports</td>
+                        <td class="feature-available">✓ Full API access</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="transition-examples">
+            <div class="examples-title">User Transition Examples</div>
+            
+            <div class="transition-example">
+                <div class="example-header">Scenario 1: From Basic to Intermediate</div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">User Context:</div>
+                    <div class="scenario-content">
+                        Sarah (QA Manager) has been using the basic Test Execution Performance widget for 2 weeks. She successfully created her first widget showing "Average test duration over last 30 days" and added it to the team dashboard.
+                    </div>
+                </div>
+                
+                <div class="transition-trigger">
+                    <strong>Transition Trigger:</strong> Sarah notices execution times are higher on Fridays and wants to compare with previous months to see if this is a pattern.
+                </div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">Progressive Disclosure Response:</div>
+                    <div class="scenario-content">
+                        System shows "Show More Options" with a hint: "Need to compare with previous periods or add more filters?" When clicked, reveals time comparison dropdown and environment filters - exactly what Sarah needs, without overwhelming complexity.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transition-example">
+                <div class="example-header">Scenario 2: From Intermediate to Advanced</div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">User Context:</div>
+                    <div class="scenario-content">
+                        Mike (Senior QA Lead) has created multiple widgets with custom filters and time comparisons. He's comfortable with the intermediate interface and has built 5 different performance analysis widgets for various team needs.
+                    </div>
+                </div>
+                
+                <div class="transition-trigger">
+                    <strong>Transition Trigger:</strong> Mike wants to create a "Performance Score" combining execution time, pass rate, and team velocity into a single metric for executive reporting.
+                </div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">Progressive Disclosure Response:</div>
+                    <div class="scenario-content">
+                        System detects Mike's usage pattern and proactively suggests "Advanced Settings" with calculated fields capability. The interface reveals a formula builder with business-friendly functions, examples, and validation - bridging the gap to advanced capabilities.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transition-example">
+                <div class="example-header">Scenario 3: From Advanced to Expert</div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">User Context:</div>
+                    <div class="scenario-content">
+                        Lisa (QA Director & Analytics Champion) has mastered advanced configuration and created complex cross-entity analysis widgets. She's now the go-to person for team analytics and wants to optimize query performance and create custom datasets.
+                    </div>
+                </div>
+                
+                <div class="transition-trigger">
+                    <strong>Transition Trigger:</strong> Lisa needs to create a custom dataset combining data from external sources and wants to optimize query performance for company-wide dashboards.
+                </div>
+                
+                <div class="example-scenario">
+                    <div class="scenario-title">Progressive Disclosure Response:</div>
+                    <div class="scenario-content">
+                        System recognizes Lisa as a power user and offers "Expert Mode" access. This unlocks direct SQL editing, custom dataset creation, and performance optimization tools - essentially providing controlled access to Superset's full capabilities within the Katalon interface.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(trigger, sectionId) {
+            const section = document.getElementById(sectionId);
+            const isRevealed = section.classList.contains('revealed');
+            
+            if (isRevealed) {
+                section.classList.remove('revealed');
+                trigger.textContent = trigger.textContent.replace('↑', '↓');
+                trigger.classList.remove('clicked');
+            } else {
+                section.classList.add('revealed');
+                trigger.textContent = trigger.textContent.replace('↓', '↑');
+                trigger.classList.add('clicked');
+            }
+        }
+    </script>
+</body>
+</html>

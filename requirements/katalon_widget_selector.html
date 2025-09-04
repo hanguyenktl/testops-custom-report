@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalon Custom Widget Builder - Revised Templates</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 48px;
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 20px;
+            font-weight: 500;
+            color: #64748b;
+            position: relative;
+        }
+        
+        .step.active {
+            color: #3b82f6;
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 600;
+        }
+        
+        .step.active .step-number {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .dataset-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .execution-legend .legend-dot { background: #3b82f6; }
+        .coverage-legend .legend-dot { background: #10b981; }
+        .defect-legend .legend-dot { background: #f59e0b; }
+        .testcase-legend .legend-dot { background: #8b5cf6; }
+        
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .use-case-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .use-case-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -4px rgba(59, 130, 246, 0.15);
+        }
+        
+        .use-case-card.selected {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .execution-icon { background: #dbeafe; }
+        .coverage-icon { background: #dcfce7; }
+        .defect-icon { background: #fef3c7; }
+        .testcase-icon { background: #ede9fe; }
+        .cross-icon { background: #f3e8ff; }
+        .operational-icon { background: #fecaca; }
+        
+        .dataset-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dataset-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .card-description {
+            color: #64748b;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .card-technical {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-left: 3px solid #e2e8f0;
+        }
+        
+        .technical-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        
+        .technical-details {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .card-scope {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .scope-tag {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .scope-optimal {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .card-example {
+            font-size: 0.85rem;
+            color: #3b82f6;
+            font-weight: 500;
+            background: #eff6ff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .business-value {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #059669;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .continue-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: background 0.3s ease;
+        }
+        
+        .continue-btn:hover {
+            background: #2563eb;
+        }
+        
+        .continue-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .persona-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Create Custom Analytics Widget</h1>
+            <p>Choose from optimized templates designed around your testing workflow. Each template is powered by our strategic datasets and supports flexible scope selection.</p>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step active">
+                <div class="step-number">1</div>
+                <span>Choose Template</span>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <span>Select Scope</span>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <span>Configure Metrics</span>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <span>Customize & Save</span>
+            </div>
+        </div>
+        
+        <div class="dataset-legend">
+            <div class="legend-item execution-legend">
+                <div class="legend-dot"></div>
+                Test Execution Dataset
+            </div>
+            <div class="legend-item coverage-legend">
+                <div class="legend-dot"></div>
+                Requirement Coverage Dataset
+            </div>
+            <div class="legend-item defect-legend">
+                <div class="legend-dot"></div>
+                Defect Analysis Dataset
+            </div>
+            <div class="legend-item testcase-legend">
+                <div class="legend-dot"></div>
+                Test Case Management Dataset
+            </div>
+        </div>
+        
+        <div class="use-case-grid">
+            <div class="use-case-card" onclick="selectCard(this)" data-template="execution_performance">
+                <div class="business-value">Performance ROI</div>
+                <div class="card-header">
+                    <div class="card-icon execution-icon">⚡</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #3b82f6;"></div>
+                        Execution
+                    </div>
+                </div>
+                <div class="card-title">Test Execution Performance</div>
+                <div class="card-description">Analyze execution times, resource utilization, and automation efficiency. Compare manual vs automated performance across different scopes.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Time series | Metrics: AVG(duration), COUNT(*) | Group: test_type, time</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag scope-optimal">Time</span>
+                    <span class="scope-tag">Sprint</span>
+                    <span class="scope-tag">Release</span>
+                </div>
+                
+                <div class="card-example">"Show me average test execution time trends over the last month, comparing manual vs automated tests"</div>
+                <div class="persona-tag">Perfect for: QA Managers, Team Leads</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="quality_trends">
+                <div class="business-value">Quality Gate</div>
+                <div class="card-header">
+                    <div class="card-icon execution-icon">📊</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #3b82f6;"></div>
+                        Execution
+                    </div>
+                </div>
+                <div class="card-title">Quality Trends & Pass Rate Analysis</div>
+                <div class="card-description">Track pass/fail rates, identify quality degradation patterns, and monitor test stability across time periods or iterations.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Stacked bars + Line | Metrics: Pass rate %, Execution count | Filters: Published tests only</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag">Time</span>
+                    <span class="scope-tag scope-optimal">Sprint</span>
+                    <span class="scope-tag">Release</span>
+                </div>
+                
+                <div class="card-example">"Display Sprint 7 daily pass rate trends with execution volume context"</div>
+                <div class="persona-tag">Perfect for: QA Directors, Release Managers</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="coverage_readiness">
+                <div class="business-value">Release Readiness</div>
+                <div class="card-header">
+                    <div class="card-icon coverage-icon">🎯</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #10b981;"></div>
+                        Coverage
+                    </div>
+                </div>
+                <div class="card-title">Requirement Coverage & Test Readiness</div>
+                <div class="card-description">Monitor test coverage percentages, identify uncovered requirements, and track testing progress against planned scope.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Progress bars + Pie | Metrics: Coverage %, Execution %, Pass coverage | Complex requirement logic</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag">Time</span>
+                    <span class="scope-tag scope-optimal">Sprint</span>
+                    <span class="scope-tag scope-optimal">Release</span>
+                </div>
+                
+                <div class="card-example">"What percentage of Release 2.1 requirements are fully tested and passing?"</div>
+                <div class="persona-tag">Perfect for: Product Managers, QA Directors</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="defect_intelligence">
+                <div class="business-value">Quality Intelligence</div>
+                <div class="card-header">
+                    <div class="card-icon defect-icon">🐛</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #f59e0b;"></div>
+                        Defect
+                    </div>
+                </div>
+                <div class="card-title">Defect Intelligence & Resolution Analysis</div>
+                <div class="card-description">Analyze defect creation vs resolution trends, track resolution times, and identify quality hotspots by priority and component.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Dual-axis combo | Metrics: Creation rate, Resolution time, Open count | Group: Priority, status</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag scope-optimal">Time</span>
+                    <span class="scope-tag">Sprint</span>
+                    <span class="scope-tag">Release</span>
+                </div>
+                
+                <div class="card-example">"Track critical defect resolution time trends and identify if we're keeping up with defect discovery"</div>
+                <div class="persona-tag">Perfect for: QA Managers, Development Leads</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="testcase_productivity">
+                <div class="business-value">Team Efficiency</div>
+                <div class="card-header">
+                    <div class="card-icon testcase-icon">📝</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #8b5cf6;"></div>
+                        Test Case
+                    </div>
+                </div>
+                <div class="card-title">Test Case Activity & Team Productivity</div>
+                <div class="card-description">Monitor test case creation, modification activity, and automation transition progress. Track team productivity and identify bottlenecks.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Activity timeline | Metrics: Creation count, Update count, Automation % | Group: Author, status</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag scope-optimal">Time</span>
+                    <span class="scope-tag">Sprint</span>
+                    <span class="scope-tag">Release</span>
+                </div>
+                
+                <div class="card-example">"Show test case creation activity by team member over the last sprint with automation adoption rates"</div>
+                <div class="persona-tag">Perfect for: Team Leads, QA Managers</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="cross_entity_analysis">
+                <div class="business-value">Strategic Insight</div>
+                <div class="card-header">
+                    <div class="card-icon cross-icon">🔗</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #8b5cf6;"></div>
+                        Multi-Dataset
+                    </div>
+                </div>
+                <div class="card-title">Cross-Entity Quality Intelligence</div>
+                <div class="card-description">Advanced analysis combining test execution, coverage, and defects. Identify relationships between coverage gaps, test failures, and defect patterns.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Bubble/Matrix | Metrics: Coverage %, Defect density, Pass rate | Complex cross-dataset joins</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag">Time</span>
+                    <span class="scope-tag scope-optimal">Sprint</span>
+                    <span class="scope-tag scope-optimal">Release</span>
+                </div>
+                
+                <div class="card-example">"Show correlation between requirement coverage levels and defect discovery rates by component"</div>
+                <div class="persona-tag">Perfect for: QA Directors, Engineering Managers</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="operational_health">
+                <div class="business-value">Operations</div>
+                <div class="card-header">
+                    <div class="card-icon operational-icon">💊</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #3b82f6;"></div>
+                        Execution
+                    </div>
+                </div>
+                <div class="card-title">Test Infrastructure & Resource Health</div>
+                <div class="card-description">Monitor testing infrastructure utilization, concurrent execution patterns, and environment-specific performance characteristics.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Heatmap + Gauge | Metrics: Concurrent sessions, Resource utilization, Environment performance</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag scope-optimal">Time</span>
+                    <span class="scope-tag">Sprint</span>
+                    <span class="scope-tag">Release</span>
+                </div>
+                
+                <div class="card-example">"Display testing infrastructure load patterns and identify peak usage times across different environments"</div>
+                <div class="persona-tag">Perfect for: DevOps Engineers, QA Infrastructure</div>
+            </div>
+            
+            <div class="use-case-card" onclick="selectCard(this)" data-template="configuration_matrix">
+                <div class="business-value">Coverage Matrix</div>
+                <div class="card-header">
+                    <div class="card-icon execution-icon">🌐</div>
+                    <div class="dataset-badge">
+                        <div class="dataset-dot" style="background: #3b82f6;"></div>
+                        Execution
+                    </div>
+                </div>
+                <div class="card-title">Configuration Coverage Matrix</div>
+                <div class="card-description">Advanced platform coverage analysis showing test execution distribution across OS, browser, and device combinations with gap identification.</div>
+                
+                <div class="card-technical">
+                    <div class="technical-title">Auto-Generated Config:</div>
+                    <div class="technical-details">Chart: Matrix heatmap | Metrics: Execution count, Coverage % | Multi-dimensional grouping: OS+Browser+Version</div>
+                </div>
+                
+                <div class="card-scope">
+                    <span class="scope-tag">Time</span>
+                    <span class="scope-tag scope-optimal">Sprint</span>
+                    <span class="scope-tag scope-optimal">Release</span>
+                </div>
+                
+                <div class="card-example">"Show comprehensive test coverage matrix across all platform configurations for Release 2.1"</div>
+                <div class="persona-tag">Perfect for: QA Leads, Cross-platform Teams</div>
+            </div>
+        </div>
+        
+        <button class="continue-btn" id="continueBtn" disabled>Continue to Scope Selection →</button>
+    </div>
+    
+    <script>
+        let selectedTemplate = null;
+        
+        function selectCard(card) {
+            // Remove selection from all cards
+            document.querySelectorAll('.use-case-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select the clicked card
+            card.classList.add('selected');
+            selectedTemplate = card.dataset.template;
+            
+            // Enable continue button
+            document.getElementById('continueBtn').disabled = false;
+        }
+        
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            if (selectedTemplate) {
+                alert(`Moving to Step 2: Scope Selection for ${selectedTemplate} template\n\nOptimal scopes and configuration will be pre-selected based on this template's characteristics.`);
+            }
+        });
+    </script>
+</body>
+</html>
