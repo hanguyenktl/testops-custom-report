@@ -14,7 +14,7 @@ This is a **TestOps Custom Report** UI prototype application - a Next.js 15 web 
 - After get the plan, make sure you Write the plan to • claude/tasks/TASK_NAME. md.
 - The plan should be a detailed implementation plan and the reasoning behind them, as well as tasks broken down.
 - If the task require external knowledge or certain package, also research to get latest knowledge (Use Task tool for research)
-- Don't over plan it, the purpose is to build UI prototype to demonstrate the new flow and feature capabilities, so we need to focus on the frontend side only.
+- Don't over plan it, the purpose is to build UI prototype to demonstrate the new flow and feature capabilities, so we need to focus on the frontend side only, and be efficient in the way we plan, ultilizing mock data, and don't plan for backend nor performance.
 - Once you write the plan, firstly ask me to review it. Do not continue until I approve the plan.
 
 ### While implementing
