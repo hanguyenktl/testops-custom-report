@@ -1,33 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { qaDataGenerator } from '@/lib/mock-data/qa-data-generator';
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const datasetType = searchParams.get('dataset');
-  const count = parseInt(searchParams.get('count') || '1000');
-  const daysBack = parseInt(searchParams.get('daysBack') || '90');
+export const dynamic = 'force-static';
+
+export async function GET() {
+  // Static generation - use default values
+  const datasetType = 'test_execution';
+  const count = 1000;
+  const daysBack = 90;
 
   try {
-    let data;
-    
-    switch (datasetType) {
-      case 'test_execution':
-        data = qaDataGenerator.generateTestExecutions(count, daysBack);
-        break;
-      case 'defect_tracking':
-        data = qaDataGenerator.generateDefects(Math.min(count, 500), daysBack);
-        break;
-      case 'requirement_coverage':
-        data = qaDataGenerator.generateRequirements(Math.min(count, 300));
-        break;
-      default:
-        // Return all datasets with sample data
-        data = {
-          test_execution: qaDataGenerator.generateTestExecutions(100, 30),
-          defect_tracking: qaDataGenerator.generateDefects(50, 30),
-          requirement_coverage: qaDataGenerator.generateRequirements(50)
-        };
-    }
+    // For static export, always return all datasets with sample data
+    const data = {
+      test_execution: qaDataGenerator.generateTestExecutions(100, 30),
+      defect_tracking: qaDataGenerator.generateDefects(50, 30),
+      requirement_coverage: qaDataGenerator.generateRequirements(50)
+    };
 
     // Add metadata
     const response = {
@@ -51,26 +39,18 @@ export async function GET(request: NextRequest) {
 }
 
 // POST endpoint for filtered/aggregated data (used for chart previews)
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    const body = await request.json();
-    const { dataset, metrics, dimensions, filters, timeRange, chartType } = body;
+    // Static generation - use default values
+    const dataset = 'test_execution';
+    const metrics: any[] = [];
+    const dimensions: any[] = [];
+    const filters: any[] = [];
+    const timeRange = 'Last 30 days';
+    const chartType = 'bar';
 
-    // Generate base data
-    let rawData;
-    switch (dataset) {
-      case 'test_execution':
-        rawData = qaDataGenerator.generateTestExecutions(500, 30);
-        break;
-      case 'defect_tracking':
-        rawData = qaDataGenerator.generateDefects(200, 30);
-        break;
-      case 'requirement_coverage':
-        rawData = qaDataGenerator.generateRequirements(100);
-        break;
-      default:
-        throw new Error(`Unknown dataset: ${dataset}`);
-    }
+    // Generate base data (static for export)
+    const rawData = qaDataGenerator.generateTestExecutions(500, 30);
 
     // Apply filters (simplified for demo)
     let filteredData: any[] = rawData;

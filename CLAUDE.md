@@ -20,6 +20,7 @@ This is a **TestOps Custom Report** UI prototype application - a Next.js 15 web 
 ### While implementing
 - You should update the plan as you work.
 - After you complete tasks in the plan, you should update and append detailed descriptions of the changes you made, so following tasks can be easily hand over to other engineers.
+- Note this will be build as static files published to Github Pages, ensure all the static export configuration
 
 ## Core Architecture
 
