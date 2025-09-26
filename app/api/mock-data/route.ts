@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Apply filters (simplified for demo)
-    let filteredData = rawData;
+    let filteredData: any[] = rawData;
     if (filters && filters.length > 0) {
       filteredData = rawData.filter(record => {
         return filters.every((filter: any) => {
@@ -162,22 +162,22 @@ function aggregateData(data: any[], metrics: any[], dimensions: any[], chartType
     metrics.forEach(metric => {
       switch (metric.id) {
         case 'pass_rate':
-          const passed = records.filter(r => r.status === 'PASSED').length;
+          const passed = records.filter((r: any) => r.status === 'PASSED').length;
           point[metric.name] = Math.round((passed / records.length) * 100);
           break;
         case 'avg_duration':
-          const avgDuration = records.reduce((sum, r) => sum + (r.duration_seconds || 0), 0) / records.length;
+          const avgDuration = records.reduce((sum: number, r: any) => sum + (r.duration_seconds || 0), 0) / records.length;
           point[metric.name] = Math.round(avgDuration);
           break;
         case 'total_executions':
           point[metric.name] = records.length;
           break;
         case 'failure_rate':
-          const failed = records.filter(r => ['FAILED', 'ERROR'].includes(r.status)).length;
+          const failed = records.filter((r: any) => ['FAILED', 'ERROR'].includes(r.status)).length;
           point[metric.name] = Math.round((failed / records.length) * 100);
           break;
         case 'automation_coverage':
-          const automated = records.filter(r => r.test_type === 'automated').length;
+          const automated = records.filter((r: any) => r.test_type === 'automated').length;
           point[metric.name] = Math.round((automated / records.length) * 100);
           break;
         default:

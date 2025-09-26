@@ -467,6 +467,7 @@ export const TEMPLATE_CONFIGS: TemplateConfig[] = [
     icon: '🔗',
     businessValue: 'Strategic Insight',
     persona: ['QA Directors', 'Engineering Managers'],
+    dataset: 'requirement_coverage_dataset', // Primary dataset
     datasets: ['requirement_coverage_dataset', 'defect_analysis_dataset', 'test_execution_dataset'],
     chartType: 'bubble_matrix',
     optimalScope: ['sprint', 'release'],
@@ -477,8 +478,7 @@ export const TEMPLATE_CONFIGS: TemplateConfig[] = [
         coverage_percent: 'FROM requirement_coverage_dataset',
         defect_density: 'FROM defect_analysis_dataset',
         test_volume: 'FROM test_execution_dataset'
-      },
-      complexity: 'high'
+      }
     },
     level1Options: [
       {
@@ -574,7 +574,7 @@ export const TEMPLATE_CONFIGS: TemplateConfig[] = [
     supportedScopes: ['time', 'sprint', 'release'],
     autoConfig: {
       dimensions: ['os', 'browser', 'browser_version'],
-      metric: 'COUNT(DISTINCT test_case_id)',
+      metrics: ['COUNT(DISTINCT test_case_id)'],
       visualization: {
         colorScale: 'sequential',
         showMissing: true

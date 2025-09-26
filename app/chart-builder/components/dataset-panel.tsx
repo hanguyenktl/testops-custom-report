@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ export function DatasetPanel() {
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section as keyof typeof prev]
     }));
   };
 
@@ -177,8 +177,8 @@ interface FieldExplorerProps {
   dataset: QADataset;
   expandedSections: Record<string, boolean>;
   onToggleSection: (section: string) => void;
-  getMetricIcon: (type: string) => JSX.Element;
-  getDimensionIcon: (category: string) => JSX.Element;
+  getMetricIcon: (type: string) => React.JSX.Element;
+  getDimensionIcon: (category: string) => React.JSX.Element;
 }
 
 function FieldExplorer({ 
@@ -273,7 +273,7 @@ function FieldExplorer({
 // Draggable metric component
 interface DraggableMetricProps {
   metric: QAMetric;
-  getIcon: (type: string) => JSX.Element;
+  getIcon: (type: string) => React.JSX.Element;
 }
 
 function DraggableMetric({ metric, getIcon }: DraggableMetricProps) {
@@ -324,7 +324,7 @@ function DraggableMetric({ metric, getIcon }: DraggableMetricProps) {
 // Draggable dimension component
 interface DraggableDimensionProps {
   dimension: QADimension;
-  getIcon: (category: string) => JSX.Element;
+  getIcon: (category: string) => React.JSX.Element;
 }
 
 function DraggableDimension({ dimension, getIcon }: DraggableDimensionProps) {

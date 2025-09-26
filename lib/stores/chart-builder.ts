@@ -160,7 +160,7 @@ export const useChartBuilder = create<ChartBuilderState>((set, get) => ({
 }));
 
 // Helper function to automatically infer chart type based on selected fields
-function inferChartType(config: ChartConfiguration): string {
+function inferChartType(config: ChartConfiguration): 'line' | 'bar' | 'area' | 'pie' | 'table' | 'mixed' {
   const { metrics, dimensions } = config;
   
   if (metrics.length === 0 || dimensions.length === 0) {

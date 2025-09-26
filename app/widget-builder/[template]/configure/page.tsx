@@ -147,7 +147,7 @@ export default function TemplateConfiguration() {
                   </div>
                   <Button
                     variant="outline"
-                    onClick={() => setConfigurationLevel(configurationLevel + 1)}
+                    onClick={() => setConfigurationLevel(Math.min(configurationLevel + 1, 3) as 1 | 2 | 3)}
                     className="w-full flex items-center justify-center gap-2 py-3 border-dashed border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
                   >
                     <span>🎛️</span>
